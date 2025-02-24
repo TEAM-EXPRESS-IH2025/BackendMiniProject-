@@ -11,7 +11,8 @@ const PORT = 5005;
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
 
-
+const cohort=require("./cohorts.json");
+const student=require("./students.json");
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
@@ -29,6 +30,12 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
+app.get("/api/cohorts", (req, res) => {
+  res.json (cohort);
+});
+app.get("/api/students", (req, res) => {
+  res.json (student);
+});
 
 // START SERVER
 app.listen(PORT, () => {
