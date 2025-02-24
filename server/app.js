@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors=require(cors);
 const cookieParser = require("cookie-parser");
 const PORT = 5005;
 
@@ -21,6 +22,9 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173"  
+}));
 
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
