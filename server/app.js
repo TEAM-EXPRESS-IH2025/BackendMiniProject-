@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const cors=require(cors);
 const cookieParser = require("cookie-parser");
 const PORT = 5005;
-
+const cors = require("cors");
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
@@ -12,8 +12,9 @@ const PORT = 5005;
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
 
-const cohort=require("./cohorts.json");
-const student=require("./students.json");
+const cohort=require("./data/cohorts.json");
+const student=require("./data/students.json");
+
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
@@ -26,6 +27,15 @@ app.use(cors({
   origin: "http://localhost:5173"  
 }));
 
+// CORS middleware
+// access to every ip&domain
+// app.use(cors())
+// access to specific ip&domain
+app.use(
+  cors({
+    origin: ['http://localhost:5173']
+  })
+)
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
@@ -37,6 +47,7 @@ app.get("/docs", (req, res) => {
 app.get("/api/cohorts", (req, res) => {
   res.json (cohort);
 });
+
 app.get("/api/students", (req, res) => {
   res.json (student);
 });
