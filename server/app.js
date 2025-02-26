@@ -5,24 +5,20 @@ const PORT = 5005;
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Cohorts = require("./models/Cohorts.model");
-const Students = require("./models/Students.model");
+const Students = require("./models/students.model");
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
 // http://localhost:5005
-
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
-
 const cohort=require("./data/cohorts.json");
 const student=require("./data/students.json");
-
 mongoose
   .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
   .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch(err => console.error("Error connecting to MongoDB", err));
-
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
@@ -32,9 +28,8 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5173"  
+  origin: "http://localhost:5173"
 }));
-
 // CORS middleware
 // access to every ip&domain
 // app.use(cors())
@@ -44,23 +39,75 @@ app.use(
     origin: ['http://localhost:5173']
   })
 )
-
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
-
 app.get("/api/cohorts", (req, res) => {
   res.json (cohort);
 });
+//POST /api/students -->Creates a new student
+app.post("/api/students", (req, res) => {
+  const newStudent = req.body;
 
+  Students.create(newStudent)
+    .then((student) => {
+      res.status(201).json(student);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Failed to create new student" });
+    });
+});
+//GET /api/students -->Retrieves all of the students in the database collection
 app.get("/api/students", (req, res) => {
-  res.json (student);
+  Students.find({})
+    .then((students) => {
+      res.status(200).json(students);
+    })
+    .catch((_error) => {
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
 });
 
+//GET /api/students/cohort/:cohortId --> Retrieves all of the students for a given cohort
 
+
+
+//GET /api/students -->Retrieves all of the students in the database collection
+app.get("/api/students", (req, res) => {
+  Students.find({})
+    .then((students) => {
+      res.status(200).json(students);
+    })
+    .catch((_error) => {
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
+});
+
+//PUT /api/students/:studentId --> Updates a specific student by id
+app.put("/api/students/:studentId", (req,res) => {
+  const { studentId } = req.params;
+const newStudent = req.body;
+
+Students.findByIdAndUpdate(studentId, newStudent, {new:true})
+.then((updatedStudent) => {
+  res.status(200).json(updatedStudent);
+})
+.catch((_error) => {
+  res.status(500).json({ error: "Failed to update student" });
+});
+});
+
+// DELETE /api/students/:studentId --> Deletes a specific student by id
+app.delete("/api/students/:studentId", (req,res) => {
+  const { studentId } = req.params;
+  Students.findByIdAndDelete(studentId)
+  .then((_result) => {
+    res.status(204).json({error:"Failed to delete student"});
+  });
+});
 app.get("/cohorts" ,(req,res) => {
   Cohorts.find({})
   .then((cohorts) => {
@@ -72,7 +119,6 @@ app.get("/cohorts" ,(req,res) => {
     res.status(500).json({ error: "Failed to retrieve cohorts" });
   });
 });
-
 app.get("/students" ,(req,res) => {
   Students.find({})
   .then((students) => {
@@ -84,10 +130,6 @@ app.get("/students" ,(req,res) => {
     res.status(500).json({ error: "Failed to retrieve students" });
   });
 });
-
-
-
-
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
