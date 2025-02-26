@@ -5,7 +5,7 @@ const PORT = 5005;
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Cohorts = require("./models/Cohorts.model");
-const Students = require("./models/students.model");
+const Students = require("./models/Students.model");
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -108,6 +108,70 @@ app.delete("/api/students/:studentId", (req,res) => {
     res.status(204).json({error:"Failed to delete student"});
   });
 });
+
+//POST /api/cohorts - Creates a new cohort
+app.post("/api/cohorts",(req,res)=>{
+  const newCohorts = req.body;
+
+  Cohorts.create(newCohorts)
+    .then((cohort) => {
+      res.status(201).json(newCohorts);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Failed to create new newCohorts" });
+    });
+
+})
+
+//GET /api/cohorts - Retrieves all of the cohorts in the database collection
+
+app.get("/api/cohorts", (req, res) => {
+  Cohorts.find({})
+    .then((cohorts) => {
+      res.status(200).json(cohorts);
+    })
+    .catch((_error) => {
+      res.status(500).json({ error: "Failed to retrieve cohorts" });
+    });
+});
+
+//PUT /api/cohorts/:cohortId - Updates a specific cohort by id
+app.put(" /api/cohorts/:cohortId", (req,res) => {
+  const { cohortId } = req.params;
+const    newCohort = req.body;
+
+
+Cohorts.findByIdAndUpdate(cohortId,newCohort, {new:true})
+.then((updateCohort) => {
+  res.status(200).json(updateCohort);
+})
+.catch((_error) => {
+  res.status(500).json({ error: "Failed to update cohorts" });
+});
+});
+//DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
+app.delete("/api/cohorts/:cohortId", (req,res) => {
+  const { cohortId } = req.params;
+  Students.findByIdAndDelete(cohortId)
+  .then((_result) => {
+    res.status(204).json({error:"Failed to delete cohort"});
+  });
+});
+
+//GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
+
+app.get("/api/cohorts/:cohortId",(req,res)=>{
+  const {cohortId}=req.params;
+  Cohorts.findById(cohortId)
+  .then((cohorts) => {
+    res.status(200).json(cohorts);
+  })
+  .catch((_error) => {
+    res.status(500).json({ error: "Failed to retrieve cohorts" });
+  });
+
+})
+
 app.get("/cohorts" ,(req,res) => {
   Cohorts.find({})
   .then((cohorts) => {
