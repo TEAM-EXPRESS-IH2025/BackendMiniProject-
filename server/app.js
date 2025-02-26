@@ -65,25 +65,39 @@ app.post("/api/students", (req, res) => {
 //GET /api/students -->Retrieves all of the students in the database collection
 app.get("/api/students", (req, res) => {
   Students.find({})
+    .populate("cohort")
     .then((students) => {
       res.status(200).json(students);
     })
     .catch((_error) => {
+      console.error("Get student err: ", _error)
       res.status(500).json({ error: "Failed to retrieve students" });
     });
 });
 
 //GET /api/students/cohort/:cohortId --> Retrieves all of the students for a given cohort
-
+app.get("/api/students/cohort/:cohortId",(req, res)=>{
+  const { cohortId } = req.params; 
+  Students.find({ cohort: cohortId }) 
+    .populate("cohort")
+    .then((students) => {
+      res.status(200).json(students);
+    })
+    .catch((_error) => {
+      res.status(500).json({ error: "Failed to retrieve" });
+  });
+});
 //GET /api/students/:studentId-->Retrieves a specific student by id
 app.get("/api/students/:studentId", (req, res) => {
   const { studentId } = req.params;
 
   Students.findById(studentId)
+    .populate("cohort")
     .then((student) => {
       res.status(200).json(student);
     })
     .catch((_error) => {
+      console.error("get studentID error",_error)
       res.status(500).json({ error: "Failed to retrieve student by id" });
     });
 });
