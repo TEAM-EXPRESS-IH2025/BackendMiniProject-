@@ -52,16 +52,16 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.get("/api/cohorts", (req, res) => {
-  res.json (cohort);
-});
+// app.get("/api/cohorts", (req, res) => {
+//   res.json (cohort);
+// });
 
-app.get("/api/students", (req, res) => {
-  res.json (student);
-});
+// app.get("/api/students", (req, res) => {
+//   res.json (student);
+// });
 
 
-app.get("/cohorts" ,(req,res) => {
+app.get("/api/cohorts" ,(req,res) => {
   Cohorts.find({})
   .then((cohorts) => {
     console.log("Retrieved Cohorts ->", cohorts);
@@ -73,7 +73,7 @@ app.get("/cohorts" ,(req,res) => {
   });
 });
 
-app.get("/students" ,(req,res) => {
+app.get("/api/students" ,(req,res) => {
   Students.find({})
   .then((students) => {
     console.log("Retrieved students ->", students);
