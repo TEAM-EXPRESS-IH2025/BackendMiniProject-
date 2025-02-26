@@ -13,12 +13,12 @@ const Students = require("./models/students.model");
 // http://localhost:5005
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
-const cohort=require("./data/cohorts.json");
-const student=require("./data/students.json");
+const cohort = require("./data/cohorts.json");
+const student = require("./data/students.json");
 mongoose
   .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
-  .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
-  .catch(err => console.error("Error connecting to MongoDB", err));
+  .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
+  .catch((err) => console.error("Error connecting to MongoDB", err));
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
@@ -27,18 +27,20 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173"
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 // CORS middleware
 // access to every ip&domain
 // app.use(cors())
 // access to specific ip&domain
 app.use(
   cors({
-    origin: ['http://localhost:5173']
+    origin: ["http://localhost:5173"],
   })
-)
+);
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
@@ -46,7 +48,7 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 app.get("/api/cohorts", (req, res) => {
-  res.json (cohort);
+  res.json(cohort);
 });
 //POST /api/students -->Creates a new student
 app.post("/api/students", (req, res) => {
@@ -73,41 +75,41 @@ app.get("/api/students", (req, res) => {
 
 //GET /api/students/cohort/:cohortId --> Retrieves all of the students for a given cohort
 
+//GET /api/students/:studentId-->Retrieves a specific student by id
+app.get("/api/students/:studentId", (req, res) => {
+  const { studentId } = req.params;
 
-
-//GET /api/students -->Retrieves all of the students in the database collection
-app.get("/api/students", (req, res) => {
-  Students.find({})
-    .then((students) => {
-      res.status(200).json(students);
+  Students.findById(studentId)
+    .then((student) => {
+      res.status(200).json(student);
     })
     .catch((_error) => {
-      res.status(500).json({ error: "Failed to retrieve students" });
+      res.status(500).json({ error: "Failed to retrieve student by id" });
+    });
+});
+//PUT /api/students/:studentId --> Updates a specific student by id
+app.put("/api/students/:studentId", (req, res) => {
+  const { studentId } = req.params;
+  const newStudent = req.body;
+
+  Students.findByIdAndUpdate(studentId, newStudent, { new: true })
+    .then((updatedStudent) => {
+      res.status(200).json(updatedStudent);
+    })
+    .catch((_error) => {
+      res.status(500).json({ error: "Failed to update student" });
     });
 });
 
-//PUT /api/students/:studentId --> Updates a specific student by id
-app.put("/api/students/:studentId", (req,res) => {
-  const { studentId } = req.params;
-const newStudent = req.body;
-
-Students.findByIdAndUpdate(studentId, newStudent, {new:true})
-.then((updatedStudent) => {
-  res.status(200).json(updatedStudent);
-})
-.catch((_error) => {
-  res.status(500).json({ error: "Failed to update student" });
-});
-});
-
 // DELETE /api/students/:studentId --> Deletes a specific student by id
-app.delete("/api/students/:studentId", (req,res) => {
+app.delete("/api/students/:studentId", (req, res) => {
   const { studentId } = req.params;
-  Students.findByIdAndDelete(studentId)
-  .then((_result) => {
-    res.status(204).json({error:"Failed to delete student"});
+  Students.findByIdAndDelete(studentId).then((_result) => {
+    res.status(204).json({ error: "Failed to delete student" });
   });
 });
+
+/*
 app.get("/cohorts" ,(req,res) => {
   Cohorts.find({})
   .then((cohorts) => {
@@ -129,7 +131,7 @@ app.get("/students" ,(req,res) => {
     console.error("Error while retrieving students ->", error);
     res.status(500).json({ error: "Failed to retrieve students" });
   });
-});
+});*/
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
