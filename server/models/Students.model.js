@@ -13,7 +13,7 @@ const studentsSchema = new Schema({
   background: String,
   image: String,
   projects: {type:[String]},
-  cohort: {type:mongoose.Schema.Types.ObjectId, ref: "Cohorts"},
+  cohort: {type:mongoose.Schema.Types.ObjectId, ref: "cohorts"},
 });
 const Students = mongoose.model("students", studentsSchema);
 module.exports = Students;
