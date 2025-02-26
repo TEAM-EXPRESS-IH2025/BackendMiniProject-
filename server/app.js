@@ -74,6 +74,17 @@ app.get("/api/students", (req, res) => {
 });
 
 //GET /api/students/cohort/:cohortId --> Retrieves all of the students for a given cohort
+app.get("//api/students/cohort/:cohortId ",(req, res)=>{
+  const { cohortId } = req.params; 
+  Student.find({ cohort: cohortId }) 
+.populate("cohort")
+.then((students) => {
+  res.status(200).json(students);
+})
+.catch((_error) => {
+  res.status(500).json({ error: "Failed to retrieve" });
+});
+})
 
 //GET /api/students/:studentId-->Retrieves a specific student by id
 app.get("/api/students/:studentId", (req, res) => {
@@ -136,7 +147,7 @@ app.get("/api/cohorts", (req, res) => {
 });
 
 //PUT /api/cohorts/:cohortId - Updates a specific cohort by id
-app.put(" /api/cohorts/:cohortId", (req,res) => {
+app.put("/api/cohorts/:cohortId", (req,res) => {
   const { cohortId } = req.params;
 const    newCohort = req.body;
 
@@ -149,28 +160,6 @@ Cohorts.findByIdAndUpdate(cohortId,newCohort, {new:true})
   res.status(500).json({ error: "Failed to update cohorts" });
 });
 });
-//DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
-app.delete("/api/cohorts/:cohortId", (req,res) => {
-  const { cohortId } = req.params;
-  Students.findByIdAndDelete(cohortId)
-  .then((_result) => {
-    res.status(204).json({error:"Failed to delete cohort"});
-  });
-});
-
-//GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
-
-app.get("/api/cohorts/:cohortId",(req,res)=>{
-  const {cohortId}=req.params;
-  Cohorts.findById(cohortId)
-  .then((cohorts) => {
-    res.status(200).json(cohorts);
-  })
-  .catch((_error) => {
-    res.status(500).json({ error: "Failed to retrieve cohorts" });
-  });
-
-})
 
 
 /*
