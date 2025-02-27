@@ -8,8 +8,6 @@ const Cohorts = require("./models/Cohorts.model");
 const Students = require("./models/Students.model");
 
 const app = express();
-const cohort = require("./data/cohorts.json");
-const student = require("./data/students.json");
 
 const mongoosesetup = async ()=>{
   try {
@@ -53,8 +51,11 @@ const studentRouter = require("./routes/students.routes");
 app.use("/api/students", studentRouter);
 // import cohortRouter
 const cohortRouter = require("./routes/cohorts.routes")
-app.use("/api/cohorts", cohortRouter)
+app.use("/api/cohorts", cohortRouter);
 
+const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
+app.use(errorHandler);
+app.use(notFoundHandler);
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
