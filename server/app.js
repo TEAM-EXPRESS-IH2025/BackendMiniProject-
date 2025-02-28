@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -47,15 +49,15 @@ app.get("/docs", (req, res) => {
 });
 
 // import studentRouter
-const studentRouter = require("./routes/students.routes");
-app.use("/api/students", studentRouter);
+app.use("/api/students", require("./routes/students.routes"));
 // import cohortRouter
-const cohortRouter = require("./routes/cohorts.routes")
-app.use("/api/cohorts", cohortRouter);
-
-const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
+app.use("/api/cohorts",require("./routes/cohorts.routes"));
+//import authorizationRouter
+app.use("/auth" , require("./routes/auth.routes"));
+//import errorHandler
+/*const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
 app.use(errorHandler);
-app.use(notFoundHandler);
+app.use(notFoundHandler);*/
 // START SERVER
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
