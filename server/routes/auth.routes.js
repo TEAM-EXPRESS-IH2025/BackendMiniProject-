@@ -112,4 +112,12 @@ router.post("/login", (req, res, _next) => {
       res.status(500).json({ message: "Internal Server Error" });
     });
 });
+
+// GET /auth/verify (Verify a JWT)
+
+router.get("/verify", isAuthenticated, (req, res, next) => {
+  console.log(`req.payload`, req.payload);
+  res.json(req.payload);
+});
+
 module.exports = router;
